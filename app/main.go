@@ -44,7 +44,7 @@ func handleConnection(conn net.Conn) {
 			conn.Write([]byte("+PONG\r\n"))
 		case "echo":
 			msg := splitCommand[1]
-			conn.Write([]byte(msg + "\r\n"))
+			conn.Write([]byte(fmt.Sprintf("$%d\r\n%s\r\n", len(msg), msg)))
 		}
 	}
 }
