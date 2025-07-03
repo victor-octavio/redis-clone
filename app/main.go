@@ -28,7 +28,6 @@ func main() {
 			fmt.Println("Error accepting connection: ", err.Error())
 			os.Exit(1)
 		}
-
 		go handleConnection(conn)
 	}
 }
@@ -39,10 +38,13 @@ func handleConnection(conn net.Conn) {
 	scanner := bufio.NewScanner(conn)
 
 	for scanner.Scan() {
-		text := scanner.Text()
-
-		if strings.TrimSpace(text) == "PING" {
+		splitCommand := strings.Split(scanner.Text(), " ")
+		switch strings.ToLower(splitCommand[0]) {
+		case "ping":
 			conn.Write([]byte("+PONG\r\n"))
+		case "echo":
+			msg := splitCommand[1]
+			conn.Write([]byte(msg + "\r\n"))
 		}
 	}
 }
