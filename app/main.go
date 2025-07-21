@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/codecrafters-io/redis-starter-go/app/connection"
+	"github.com/codecrafters-io/redis-starter-go/app/database"
 	"net"
 	"os"
 )
@@ -18,6 +19,8 @@ func main() {
 		fmt.Println("Failed to bind to port 6379")
 		os.Exit(1)
 	}
+
+	database.Start()
 
 	for {
 		conn, err := l.Accept()

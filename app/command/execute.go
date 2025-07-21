@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"github.com/codecrafters-io/redis-starter-go/app/database"
 	"net"
 	"strings"
 )
@@ -10,6 +11,8 @@ import (
 const (
 	ECHO = "ECHO"
 	PING = "PING"
+	SET  = "SET"
+	GET  = "GET"
 )
 
 func Execute(conn net.Conn, args []string) {
@@ -27,6 +30,20 @@ func Execute(conn net.Conn, args []string) {
 			conn.Write([]byte(fmt.Sprintf("$%d\r\n%s\r\n", len(msg), msg)))
 		} else {
 			conn.Write([]byte("$0\r\n"))
+		}
+	case SET:
+		key := args[1]
+		val := args[2]
+		database.SyncMap.Store(key, val)
+		conn.Write([]byte("+OK\r\n"))
+	case GET:
+		key := args[1]
+		value, ok := database.SyncMap.Load(key)
+		if ok {
+			res := fmt.Sprintf("$%d\r\n%s\r\n", len(value.(string)), value.(string))
+			conn.Write([]byte(res))
+		} else {
+			conn.Write([]byte("$-1\r\n"))
 		}
 	default:
 		conn.Write([]byte(fmt.Sprintf("-ERR unknown command '%s'\r\n", args[0])))
