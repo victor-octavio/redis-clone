@@ -190,7 +190,7 @@ func (s *Store) StartCleanup(intervalMs int64) {
 				return
 			}
 		}
-	}
+	}()
 }
 
 func (s *Store) StopCleanup() {
